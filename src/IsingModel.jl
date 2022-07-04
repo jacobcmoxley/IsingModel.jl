@@ -5,16 +5,8 @@ module IsingModel
 mutable struct IsingModelInt
     Cells::Tuple{Vararg{Int,N} where N}
     Steps::Int
-    #SaveStep::Int
+    SaveStep::Int
     State::Array{Int8}
-    β::Float64
-end
-
-mutable struct IsingModelBit
-    Cells::Tuple{Vararg{Int,N} where N}
-    Steps::Int
-    #SaveStep::Int
-    State::BitArray
     β::Float64
 end
 
@@ -31,6 +23,15 @@ function SerialStepInt!(m::IsingModelInt, Cells::Tuple{Int}, temp::Array{Int8,1}
         temp[i] = rand(Float64) < prob[h-h_min+1] ? 1 : -1
     end
     return temp
+end
+
+"""
+mutable struct IsingModelBit
+    Cells::Tuple{Vararg{Int,N} where N}
+    Steps::Int
+    SaveStep::Int
+    State::BitArray
+    β::Float64
 end
 
 function 1dBitLog(A)
@@ -53,7 +54,7 @@ function SerialStepBit!(m::IsingModelBit, Cells::Tuple{Int}, temp::BitArray{1})
     h_max = 2
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:2:h_max]
     n = length(m.State)
-    for i ∈ eachindex(m.State)
+    @inbounds @simd for i ∈ eachindex(m.State)
         left = m.State[i==1 ? n : i-1]
         right = m.State[i==n ? 1 : i+1]
         if left & right
@@ -67,9 +68,10 @@ function SerialStepBit!(m::IsingModelBit, Cells::Tuple{Int}, temp::BitArray{1})
     end
     return temp
 end
+"""
 
-function EvaluateModel(m::IsingModel)
-    return nothing
+function EvaluateModel(m::IsingModel, step::function)
+    
 end
 
 end # module
