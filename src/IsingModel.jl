@@ -1,4 +1,4 @@
-using LinearAlgebra, IfElse, Random
+using LinearAlgebra, DelimitedFiles, Random
 
 module IsingModel
 
