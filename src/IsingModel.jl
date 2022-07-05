@@ -2,7 +2,9 @@ module IsingModel
 
 using LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
-mutable struct IsingModel
+export Ising, SerialStep!, EvaluateModel!
+
+mutable struct Ising
     Cells::Tuple{Vararg{Int,N} where N}
     Steps::Int
     SaveStep::Int
@@ -11,7 +13,7 @@ mutable struct IsingModel
     β::Float64
 end
 
-function SerialStep!(m::IsingModel, Cells::Tuple{Int}, temp::Array{Int8,1})
+function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
     h_min = -2
     h_max = 2
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:h_max]
@@ -71,12 +73,17 @@ function SerialStepBit!(m::IsingModelBit, Cells::Tuple{Int}, temp::BitArray{1})
 end
 =#
 
-function EvaluateModel!(m::IsingModel, StepFunction::Function)
+function EvaluateModel!(m::Ising, StepFunction::Function)
     f = open(m.SaveFile,"w")
+    writedlm(f, m.State)
+    temp = similar(m.State)
     for st ∈ 1:m.Steps 
-        1+1
+        m.State = StepFunction(m, m.Cells, temp)
+        if st % m.SaveStep == 0
+            writedlm(f,m.State)
+        end
     end
-    return 1
+    close(f)
 end
 
 end # module
