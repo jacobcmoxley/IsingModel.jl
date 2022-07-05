@@ -26,7 +26,7 @@ function SerialStepInt!(m::IsingModelInt, Cells::Tuple{Int}, temp::Array{Int8,1}
     return temp
 end
 
-"""
+#=
 mutable struct IsingModelBit
     Cells::Tuple{Vararg{Int,N} where N}
     Steps::Int
@@ -69,14 +69,14 @@ function SerialStepBit!(m::IsingModelBit, Cells::Tuple{Int}, temp::BitArray{1})
     end
     return temp
 end
-"""
+=#
 
 function EvaluateModel!(m::IsingModel, StepFunction::function)
     f = open(m.SaveFile,"w")
     for st ∈ 1:m.Steps 
         1+1
     end
-    return nothing
+    return 1
 end
 
 end # module
