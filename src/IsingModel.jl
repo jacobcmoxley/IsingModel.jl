@@ -1,6 +1,6 @@
-using LinearAlgebra, DelimitedFiles, Random, LoopVectorization
-
 module IsingModel
+
+using LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
 mutable struct IsingModelInt
     Cells::Tuple{Vararg{Int,N} where N}
