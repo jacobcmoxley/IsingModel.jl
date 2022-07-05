@@ -33,13 +33,15 @@ function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,2})
     h_max = 4
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:h_max]
     n = length(m.State)
-    @inbounds for j in 1:n, i in 1:m
-        top = m.State[i == 1 ? m : i-1, j]
-        bottom = m.State[i == m ? 1 : i+1, j]
-        right = m.State[i, j == 1 ? n : j-1]
-        left = m.State[i, j == n ? 1 : j+1]
-        h = top + bottom + right + left
-        temp[i,j] = rand(Float64) < prob[h-min_h+1] ? +1 : -1
+    @inbounds for j ∈ 1:n
+        @tturbo for i ∈ 1:m
+            top = m.State[i == 1 ? m : i-1, j]
+            bottom = m.State[i == m ? 1 : i+1, j]
+            right = m.State[i, j == 1 ? n : j-1]
+            left = m.State[i, j == n ? 1 : j+1]
+            h = top + bottom + right + left
+            temp[i,j] = rand(Float64) < prob[h-h_min+1] ? +1 : -1
+        end
     end
     return temp
 end
