@@ -1,4 +1,4 @@
-using LinearAlgebra, DelimitedFiles, Random
+using LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
 module IsingModel
 
