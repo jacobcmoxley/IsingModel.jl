@@ -11,6 +11,7 @@ mutable struct Ising
     SaveFile::String
     State::Array{Int8}
     β::Float64
+    Ising(Cells,Steps,SaveStep,SaveFile,β) = new(Cells,Steps,SaveStep,SaveFile,rand(Int8[-1,1],Cells),β)
 end
 
 function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
