@@ -15,6 +15,16 @@ mutable struct Ising
     Ising(Cells,Steps,SaveStep,SaveFile,β) = new(Cells,Steps,SaveStep,SaveFile,rand(Int8[-1,1],Cells),β,Workers)
 end
 
+"""
+SerialStep!(m::Ising, Cells::Tuple{Vararg{Int,N}}, temp::Array{Int8,N} where N)
+
+Take one step forward on a single processor. The innermost loop will be threaded and simd using the tturbo macro.
+
+### Arguments
+m::Ising an Ising object
+Cells::Tuple{Vararg{Int,N}} the Cells field of the Ising object m. Included to specialize the function for different dimensions
+temp::Array{Int8,N} preallocated array, similar(m.State)
+"""
 function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
     h_min = -2
     h_max = 2
