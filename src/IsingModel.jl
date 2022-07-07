@@ -68,6 +68,10 @@ function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,3})
     return temp
 end
 
+function InitDist()
+    return 1
+end
+
 function EvaluateModel!(m::Ising, StepFunction::Function)
     f = open(m.SaveFile,"w")
     writedlm(f, m.State)
