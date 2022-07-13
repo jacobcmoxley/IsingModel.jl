@@ -1,3 +1,8 @@
 ```@docs
-SerialStep!(m::Ising, Cells::Tuple{Vararg{Int,N}}, temp::Array{Int8,N}) where N
+Ising(Cells::Tuple{Vararg{Int,N} where N}, 
+    Steps::Int,
+    SaveStep::Int,
+    SaveFile::String,
+    β::Float64)
+SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
 ```

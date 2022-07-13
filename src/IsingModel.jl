@@ -4,6 +4,23 @@ using LinearAlgebra, DelimitedFiles, Random, LoopVectorization, Distributed
 
 export Ising, SerialStep!, EvaluateModel!
 
+"""
+## Constructors
+Ising - Type
+Ising(Cells::Tuple{Vararg{Int,N} where N}, 
+    Steps::Int,
+    SaveStep::Int,
+    SaveFile::String,
+    β::Float64)
+
+Instante an Ising object. Steps is the total number of steps. SaveStep is how often the state is saved. SaveFile is the absolute file path. $β$ is temperature
+
+### Examples
+```
+Ising((15,),100,10,"~/Documents/IsingExample1.txt",20.2)
+```
+Object which will have 15 cells, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
+"""
 mutable struct Ising
     Cells::Tuple{Vararg{Int,N} where N}
     Steps::Int
@@ -12,11 +29,11 @@ mutable struct Ising
     State::Array{Int8}
     β::Float64
     Workers::Int
-    Ising(Cells,Steps,SaveStep,SaveFile,β) = new(Cells,Steps,SaveStep,SaveFile,rand(Int8[-1,1],Cells),β,Workers)
+    Ising(Cells,Steps,SaveStep,SaveFile,β) = new(Cells,Steps,SaveStep,SaveFile,rand(Int8[-1,1],Cells),β,nworkers())
 end
 
 """
-SerialStep!(m::Ising, Cells::Tuple{Vararg{Int,N}}, temp::Array{Int8,N} where N)
+SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
 
 Take one step forward on a single processor. The innermost loop will be threaded and simd using the tturbo macro.
 
