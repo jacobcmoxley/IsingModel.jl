@@ -1,6 +1,6 @@
 module IsingModel
 
-using LinearAlgebra, DelimitedFiles, Random, LoopVectorization, Distributed
+using LinearAlgebra, DelimitedFiles, Random, LoopVectorization, Distributed, DistributedArrays
 
 export Ising, SerialStep!, EvaluateModel!
 
@@ -13,7 +13,7 @@ Ising(Cells::Tuple{Vararg{Int,N} where N},
     SaveFile::String,
     β::Float64)
 
-Instante an Ising object. Steps is the total number of steps. SaveStep is how often the state is saved. SaveFile is the absolute file path. $β$ is temperature
+Instante an Ising object. Steps is the total number of steps. SaveStep is how often the state is saved. SaveFile is the absolute file path. β is temperature
 
 ### Examples
 ```
