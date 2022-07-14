@@ -32,12 +32,12 @@ mutable struct Ising
 end
 
 
-function Ising(Cells::Tuple{Vararg{Int,N} where N},
-    Procs::Tuple{Vararg{Int,N} where N},
+function Ising{N}(Cells::Tuple{Vararg{Int,N}},
+    Procs::Tuple{Vararg{Int,N}},
     Steps::Int,
     SaveStep::Int,
     SaveFile::String,
-    β::Float64)
+    β::Float64) where N
     if nworkers() < prod(Procs)
         addprocs(nworkers()-prod(Procs))
     end
