@@ -44,10 +44,10 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     #@everywhere using DistributedArrays
 
     if prod(Procs) == 1
-        Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
+        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
     else
         @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
-        Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,
+        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,
             map(f,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
     end
 end
