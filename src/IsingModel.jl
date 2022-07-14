@@ -32,8 +32,8 @@ mutable struct Ising
 end
 
 
-function Ising(Cells::Tuple{Vararg{Int,N}},
-    Procs::Tuple{Vararg{Int,N}},
+function Ising(Cells::Tuple{Vararg{Int,N} where N},
+    Procs::Tuple{Vararg{Int,N} where N},
     Steps::Int,
     SaveStep::Int,
     SaveFile::String,
