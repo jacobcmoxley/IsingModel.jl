@@ -21,9 +21,9 @@ Ising((15,),(2,),100,10,"~/Documents/IsingExample1.txt",20.2)
 ```
 Object which will have 30 cells, 2 workers, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
 """
-mutable struct Ising {N <: Int}
-    Cells::Tuple{Vararg{Int,N}}
-    Procs::Tuple{Vararg{Int,N}}
+mutable struct Ising{N<:Int}
+    Cells::Tuple{Vararg{Int,N} where N}
+    Procs::Tuple{Vararg{Int,N} where N}
     Steps::Int
     SaveStep::Int
     SaveFile::String
