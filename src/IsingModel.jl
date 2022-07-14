@@ -37,8 +37,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     Steps::Int,
     SaveStep::Int,
     SaveFile::String,
-    β::Float64,
-    State::Union{Array{Int8},DArray{Int8}})
+    β::Float64)
     if nworkers() < prod(b)
         addprocs(nworkers()-prod(b))
     end
