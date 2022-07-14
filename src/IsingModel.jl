@@ -1,7 +1,7 @@
 module IsingModel
 
-using LinearAlgebra, DelimitedFiles, Random, LoopVectorization, Distributed, DistributedArrays
-@everywhere LinearAlgebra, DelimitedFiles, Random, LoopVectorization, Distributed, DistributedArrays
+using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+@everywhere Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
 export Ising, SerialStep!, EvaluateModel!
 
