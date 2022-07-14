@@ -37,7 +37,7 @@ function Ising{N}(Cells::Tuple{Vararg{Int,N}},
     Steps::Int,
     SaveStep::Int,
     SaveFile::String,
-    β::Float64) where N
+    β::Float64) where {N}
     if nworkers() < prod(Procs)
         addprocs(nworkers()-prod(Procs))
     end
