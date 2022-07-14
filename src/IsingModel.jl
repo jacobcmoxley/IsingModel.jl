@@ -29,7 +29,13 @@ mutable struct Ising
     SaveFile::String
     β::Float64
     State::Union{Array{Int8},DArray{Int8}}
-    function Ising
+    function Ising(Cells::Tuple{Vararg{Int,N} where N}
+        Procs::Tuple{Vararg{Int,N} where N}
+        Steps::Int
+        SaveStep::Int
+        SaveFile::String
+        β::Float64,
+        State::Union{Array{Int8},DArray{Int8}})
         if nworkers() < prod(b)
             addprocs(nworkers()-prod(b))
         end
