@@ -17,20 +17,34 @@ Instante an Ising object. Steps is the total number of steps. SaveStep is how of
 
 ### Examples
 ```
-Ising((15,),100,10,"~/Documents/IsingExample1.txt",20.2)
+Ising((15,),(2,),100,10,"~/Documents/IsingExample1.txt",20.2)
 ```
-Object which will have 15 cells, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
+Object which will have 30 cells, 2 workers, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
 """
 mutable struct Ising
     Cells::Tuple{Vararg{Int,N} where N}
+    Procs::Tuple{Vararg{Int,N} where N}
     Steps::Int
     SaveStep::Int
     SaveFile::String
-    State::Array{Int8}
     β::Float64
-    Workers::Int
-    Ising(Cells,Steps,SaveStep,SaveFile,β) = new(Cells,Steps,SaveStep,SaveFile,rand(Int8[-1,1],Cells),β,nworkers())
+    State::Union{Array{Int8},DArray{Int8}}
+    function Ising
+        if nworkers() < prod(b)
+            addprocs(nworkers()-prod(b))
+        end
+        #@everywhere using DistributedArrays
+
+        if prod(b) == 1
+            Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
+        else
+            @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
+            Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,
+                map(f,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
+        end
+    end
 end
+
 
 """
 SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
