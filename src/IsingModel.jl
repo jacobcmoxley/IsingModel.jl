@@ -29,28 +29,29 @@ mutable struct Ising
     SaveFile::String
     β::Float64
     State::Union{Array{Int8},DArray{Int8}}
-    function Ising(Cells::Tuple{Vararg{Int,N} where N},
-        Procs::Tuple{Vararg{Int,N} where N},
-        Steps::Int,
-        SaveStep::Int,
-        SaveFile::String,
-        β::Float64,
-        State::Union{Array{Int8},DArray{Int8}})
-        if nworkers() < prod(b)
-            addprocs(nworkers()-prod(b))
-        end
-        #@everywhere using DistributedArrays
-
-        if prod(b) == 1
-            Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
-        else
-            @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
-            Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,
-                map(f,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
-        end
-    end
 end
 
+
+function Ising(Cells::Tuple{Vararg{Int,N} where N},
+    Procs::Tuple{Vararg{Int,N} where N},
+    Steps::Int,
+    SaveStep::Int,
+    SaveFile::String,
+    β::Float64,
+    State::Union{Array{Int8},DArray{Int8}})
+    if nworkers() < prod(b)
+        addprocs(nworkers()-prod(b))
+    end
+    #@everywhere using DistributedArrays
+
+    if prod(b) == 1
+        Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
+    else
+        @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
+        Ising(Cells,Procs,Steps,SaveStep,SaveFile,β) = new(Cells,Procs,Steps,SaveStep,SaveFile,β,
+            map(f,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
+    end
+end
 
 """
 SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,1})
