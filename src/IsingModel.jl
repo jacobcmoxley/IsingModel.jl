@@ -1,7 +1,7 @@
 module IsingModel
 
 using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
-@everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+@eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
 export Ising, SerialStep!, EvaluateModel!
 
@@ -41,7 +41,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     β::Float64)
     if nworkers() < prod(Procs)
         addprocs(nworkers()-prod(Procs))
-        @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
     end
     #@everywhere using DistributedArrays
 
