@@ -171,9 +171,10 @@ function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
         old[end    , end    ] = d[bot , right]
 
         DistRule(old)
+    end
 end
 
-unction DistRule(old::Array{Int8,2})
+function DistRule(old::Array{Int8,2})
     m, n = size(old)
     new = similar(old, m-2, n-2)
     h_min = -4
