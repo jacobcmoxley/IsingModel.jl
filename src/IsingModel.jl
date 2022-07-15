@@ -49,7 +49,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     else
         @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
         return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,
-            map(f,drand(Cells .* Procs,workers()[1:prod(Procs)-1], Procs)))
+            map(f,drand(Cells .* Procs,workers()[1:(prod(Procs)-1)], Procs)))
     end
 end
 
