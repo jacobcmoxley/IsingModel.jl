@@ -70,7 +70,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     β::Float64,
     State::Union{Array{Int8},DArray{Int8}})
     if nworkers() < prod(Procs)
-        addprocs(prod(Procs) - nworkers())
+        addprocs(prod(Procs) - nworkers()+1)
         @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
         @eval export DistStep
     end
