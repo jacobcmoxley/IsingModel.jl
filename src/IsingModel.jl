@@ -48,7 +48,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     SaveFile::String,
     β::Float64)
     if nworkers() < prod(Procs)
-        addprocs(prod(Procs) - nworkers())
+        addprocs(prod(Procs) - nworkers() +1)
         @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
         @eval export DistStep
     end
