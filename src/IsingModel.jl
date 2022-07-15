@@ -42,13 +42,14 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     if nworkers() < prod(Procs)
         addprocs(prod(Procs) - nworkers())
         @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+        @eval export DistStep
     end
 
     if prod(Procs) == 1
-        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
+        return Ising(Cells,Procs,StepFunction,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
     else
         @eval @everywhere f(x)::Int8 = x<0.5 ? -1 : 1
-        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,
+        return Ising(Cells,Procs,StepFunction,Steps,SaveStep,SaveFile,β,
             map(f,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
     end
 end
@@ -117,14 +118,14 @@ function SerialStep!(m::Ising, Cells::Tuple{Int}, temp::Array{Int8,3})
     return temp
 end
 
-function InitDist(m::Ising)
+function DistStep(m::Ising)
     return 1
 end
 
 function EvaluateModel!(m::Ising, StepFunction::Function)
     f = open(m.SaveFile,"w")
     writedlm(f, m.State)
-    temp = similar(m.State)
+    temp = similar(m.State) #this might need to change
     for st ∈ 1:m.Steps 
         m.State = StepFunction(m, m.Cells, temp)
         if st % m.SaveStep == 0
