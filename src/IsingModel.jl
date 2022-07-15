@@ -3,7 +3,7 @@ module IsingModel
 using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
-export Ising, SerialStep!, EvaluateModel!
+export Ising, SerialStep!, DistStep, DistRule, EvaluateModel!
 
 mutable struct Ising
     Cells::Tuple{Vararg{Int,N} where N}
@@ -173,7 +173,7 @@ function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
         DistRule(old)
 end
 
-unction testRule(old::Array{Int8,2})
+unction DistRule(old::Array{Int8,2})
     m, n = size(old)
     new = similar(old, m-2, n-2)
     h_min = -4
