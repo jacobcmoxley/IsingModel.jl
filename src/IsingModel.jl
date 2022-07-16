@@ -155,7 +155,7 @@ function DistStep(m::Ising, Cells::Tuple{Int}, Procs::Tuple{Int})
         left  = mod(first(I[1])-2,size(m.State,1))+1
         right = mod( last(I[1]),  size(m.State,1))+1
 
-        old = Array{Int8}(undef, length(I[1]+2))
+        old = Array{Int8}(undef, length(I[1])+2)
         old[1,     ] = m.State[left]
         old[2:end-1] = m.State[I[1]]
         old[end,   ] = m.State[right]
