@@ -150,7 +150,10 @@ function SerialStep!(m::Ising, Cells::Tuple{Int,Int,Int}, temp::Array{Int8,3})
     return temp
 end
 
-
+function DistStep(m::Ising, Cells::Tuple{Int}, Procs::Tuple{Int})
+    DArray(size(m.State),procs(m.State)) do I
+        left = 
+end
 
 function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
     DArray(size(m.State),procs(m.State)) do I
