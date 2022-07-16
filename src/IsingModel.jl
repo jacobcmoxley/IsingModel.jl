@@ -3,7 +3,11 @@ module IsingModel
 using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
 
-export Ising, SerialStep!, DistStep, DistRule, EvaluateModel!
+export Ising, SerialStep!, DistStep, DistRule, EvaluateModel!, UpDown
+
+function UpDown(x)::Int8
+    return x<0.5 ? -1 : 1
+end
 
 mutable struct Ising
     Cells::Tuple{Vararg{Int,N} where N}
@@ -50,15 +54,12 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     if nworkers() < prod(Procs)
         addprocs(prod(Procs) - nworkers() +1)
         @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
-        @eval export DistStep
+        @eval export DistStep, UpDown
     end
 
     if prod(Procs) == 1
         return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
     else
-        @eval @everywhere function UpDown(x)::Int8
-            x<0.5 ? -1 : 1
-        end
         return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β, map(UpDown,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
     end
 end
@@ -73,13 +74,12 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     if nworkers() < prod(Procs)
         addprocs(prod(Procs) - nworkers()+1)
         @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
-        @eval export DistStep
+        @eval export DistStep, UpDown
     end
 
     if prod(Procs) == 1
         return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,State)
     else
-        @eval @everywhere UpDown(x)::Int8 = x<0.5 ? -1 : 1
         return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,State)
     end
 end
