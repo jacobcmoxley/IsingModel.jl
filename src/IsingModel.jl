@@ -59,8 +59,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
         @eval @everywhere function UpDown(x)::Int8
             x<0.5 ? -1 : 1
         end
-        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,
-            map(UpDown,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
+        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β, map(UpDown,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
     end
 end
 
