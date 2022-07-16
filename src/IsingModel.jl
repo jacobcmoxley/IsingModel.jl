@@ -161,6 +161,7 @@ function DistStep(m::Ising, Cells::Tuple{Int}, Procs::Tuple{Int})
         old[end,   ] = m.State[right]
 
         DistRule(old)
+    end
 end
 
 function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
