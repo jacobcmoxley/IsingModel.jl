@@ -19,9 +19,28 @@ mutable struct Ising
     State::Union{Array{Int8},DArray{Int8}}
 end
 
+function Ising(Cells::Tuple{Vararg{Int,N} where N},
+    Procs::Tuple{Vararg{Int,N} where N},
+    Steps::Int,
+    SaveStep::Int,
+    SaveFile::String,
+    β::Float64)
+    if nworkers() < prod(Procs)
+        addprocs(prod(Procs) - nworkers() +1)
+        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization, IsingModel
+        @eval export DistStep, UpDown
+    end
+
+    if prod(Procs) == 1
+        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
+    else
+        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β, map(UpDown,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
+    end
+end
+
 """
-Ising(Cells::Tuple{Vararg{Int,N} where N}, 
-    Procs::Truple{Vararg{Int,N} where N}
+Ising(Cells::Tuple{Vararg{Int,N} where N},
+    Procs::Tuple{Vararg{Int,N} where N},
     Steps::Int,
     SaveStep::Int,
     SaveFile::String,
@@ -41,24 +60,6 @@ State - Optional argument for initial state. If not provided it will be initiali
 Ising((15,),(2,),100,10,"~/Documents/IsingExample1.txt",20.2)
 Object which will have 30 cells, 2 workers, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
 """
-function Ising(Cells::Tuple{Vararg{Int,N} where N},
-    Procs::Tuple{Vararg{Int,N} where N},
-    Steps::Int,
-    SaveStep::Int,
-    SaveFile::String,
-    β::Float64)
-    if nworkers() < prod(Procs)
-        addprocs(prod(Procs) - nworkers() +1)
-        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization, IsingModel
-        @eval export DistStep, UpDown
-    end
-
-    if prod(Procs) == 1
-        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β,rand(Int8[-1,1],Cells))
-    else
-        return Ising(Cells,Procs,Steps,SaveStep,SaveFile,β, map(UpDown,drand(Cells .* Procs,workers()[1:prod(Procs)], Procs)))
-    end
-end
 
 function Ising(Cells::Tuple{Vararg{Int,N} where N},
     Procs::Tuple{Vararg{Int,N} where N},
