@@ -154,22 +154,22 @@ end
 
 function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
     DArray(size(m.State),procs(m.State)) do I
-        top   = mod(first(I[1])-2,size(d,1))+1
-        bot   = mod( last(I[1])  ,size(d,1))+1
-        left  = mod(first(I[2])-2,size(d,2))+1
-        right = mod( last(I[2])  ,size(d,2))+1
+        top   = mod(first(I[1])-2,size(m.State,1))+1
+        bot   = mod( last(I[1])  ,size(m.State,1))+1
+        left  = mod(first(I[2])-2,size(m.State,2))+1
+        right = mod( last(I[2])  ,size(m.State,2))+1
 
 
         old = Array{Int8}(undef, length(I[1])+2, length(I[2])+2)
-        old[1      , 1      ] = d[top , left]   # left side
-        old[2:end-1, 1      ] = d[I[1], left]
-        old[end    , 1      ] = d[bot , left]
-        old[1      , 2:end-1] = d[top , I[2]]
-        old[2:end-1, 2:end-1] = d[I[1], I[2]]   # middle
-        old[end    , 2:end-1] = d[bot , I[2]]
-        old[1      , end    ] = d[top , right]  # right side
-        old[2:end-1, end    ] = d[I[1], right]
-        old[end    , end    ] = d[bot , right]
+        old[1      , 1      ] = m.State[top , left]   # left side
+        old[2:end-1, 1      ] = m.State[I[1], left]
+        old[end    , 1      ] = m.State[bot , left]
+        old[1      , 2:end-1] = m.State[top , I[2]]
+        old[2:end-1, 2:end-1] = m.State[I[1], I[2]]   # middle
+        old[end    , 2:end-1] = m.State[bot , I[2]]
+        old[1      , end    ] = m.State[top , right]  # right side
+        old[2:end-1, end    ] = m.State[I[1], right]
+        old[end    , end    ] = m.State[bot , right]
 
         DistRule(old)
     end
