@@ -20,7 +20,6 @@ mutable struct Ising
 end
 
 """
-```
 Ising(Cells::Tuple{Vararg{Int,N} where N}, 
     Procs::Truple{Vararg{Int,N} where N}
     Steps::Int,
@@ -28,7 +27,6 @@ Ising(Cells::Tuple{Vararg{Int,N} where N},
     SaveFile::String,
     β::Float64,
     State::Union{Array{Int8},DArray{Int8}})
-```
 
 #Arguments
 Cells - Tuple of the number of cells per processor. Note all processors must have the same number of cells.
@@ -40,9 +38,7 @@ SaveFile - Absolute file path where the state will be saved
 State - Optional argument for initial state. If not provided it will be initialized to a uniform random.
 
 # Examples
-```
 Ising((15,),(2,),100,10,"~/Documents/IsingExample1.txt",20.2)
-```
 Object which will have 30 cells, 2 workers, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
 """
 function Ising(Cells::Tuple{Vararg{Int,N} where N},
