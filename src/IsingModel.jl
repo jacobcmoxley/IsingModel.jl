@@ -132,7 +132,7 @@ function SerialStep!(m::Ising, Cells::Tuple{Int,Int,Int}, temp::Array{Int8,3})
     h_min = -6
     h_max = 6
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:h_max]
-    m, n, o = length(m.State)
+    m, n, o = size(m.State)
     @inbounds for k ∈ 1:o
         @inbounds for j ∈ 1:n
             @tturbo for i ∈ 1:m
@@ -152,7 +152,15 @@ end
 
 function DistStep(m::Ising, Cells::Tuple{Int}, Procs::Tuple{Int})
     DArray(size(m.State),procs(m.State)) do I
-        left = 
+        left  = mod(first(I[1])-2,size(m.State,1))+1
+        right = mod( last(I[1]),  size(m.State,1))+1
+
+        old = Array{Int8}(undef, length(I[1]+2))
+        old[1,     ] = m.State[left]
+        old[2:end-1] = m.State[I[1]]
+        old[end,   ] = m.State[right]
+
+        DistRule(old)
 end
 
 function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
@@ -176,6 +184,19 @@ function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
 
         DistRule(old)
     end
+end
+
+function DistRule(old::Array{Int8,1})
+    n = size(old)[1]
+    new = similar(old, n-2)
+    h_min = -2
+    h_max = 2
+    prob = [1/(1+exp(-2*20.2*h)) for h ∈ h_min:h_max]
+    @tturbo for i ∈ 2:n-1
+        h = old[i-1] + old[i+1]
+        new[i-1] = rand(Float64) < prob[h-h_min+1] ? +1 : -1
+    end
+    new
 end
 
 function DistRule(old::Array{Int8,2})
