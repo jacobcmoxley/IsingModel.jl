@@ -53,7 +53,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     β::Float64)
     if nworkers() < prod(Procs)
         addprocs(prod(Procs) - nworkers() +1)
-        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization, IsingModel
         @eval export DistStep, UpDown
     end
 
@@ -73,7 +73,7 @@ function Ising(Cells::Tuple{Vararg{Int,N} where N},
     State::Union{Array{Int8},DArray{Int8}})
     if nworkers() < prod(Procs)
         addprocs(prod(Procs) - nworkers()+1)
-        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization
+        @eval @everywhere using Distributed, DistributedArrays, LinearAlgebra, DelimitedFiles, Random, LoopVectorization, IsingModel
         @eval export DistStep, UpDown
     end
 
