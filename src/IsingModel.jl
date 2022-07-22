@@ -47,17 +47,24 @@ Ising(Cells::Tuple{Vararg{Int,N} where N},
     β::Float64,
     State::Union{Array{Int8},DArray{Int8}})
 
-#Arguments
+# Arguments
 Cells - Tuple of the number of cells per processor. Note all processors must have the same number of cells.
+
 Procs - Tuple of the number of processors along the same axis as the cells.
+
 Steps - The total number of steps the simulation will take
+
 SaveStep - The number of steps in between saving the State
+
 SaveFile - Absolute file path where the state will be saved
+
 β - Temperature
+
 State - Optional argument for initial state. If not provided it will be initialized to a uniform random.
 
 # Examples
 Ising((15,),(2,),100,10,"~/Documents/IsingExample1.txt",20.2)
+
 Object which will have 30 cells, 2 workers, take 100 total steps, save on step 10, 20, ..., 100 at file ~/Documents/IsingExample1.txt
 """
 
@@ -184,6 +191,13 @@ function DistStep(m::Ising, Cells::Tuple{Int,Int}, Procs::Tuple{Int,Int})
     end
 end
 
+"""
+function DistStep(m::Ising, Cells::Tuple{Int,Int,Int}, Procs::Tuple{Int,Int,Int})
+    DArray(size(m.State),procs(m.State)) do I
+        
+end
+"""
+
 function DistRule(old::Array{Int8,1})
     n = size(old)[1]
     new = similar(old, n-2)
@@ -215,9 +229,15 @@ end
 function EvaluateModel!(m::Ising, StepFunction::Function)
     f = open(m.SaveFile,"w")
     writedlm(f, m.State)
-    temp = similar(m.State) #this might need to change
+    if StepFunction == SerialStep!
+        temp = similar(m.State) #this might need to change
+    end
+
     for st ∈ 1:m.Steps 
-        m.State = StepFunction(m, m.Cells, temp)
+        if StepFunction == SerialStep!
+            m.State = StepFunction(m, m.Cells, temp)
+        else
+            m.State = StepFunction(m,m.Cells,m.Procs)
         if st % m.SaveStep == 0
             writedlm(f,m.State)
         end
