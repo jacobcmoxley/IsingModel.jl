@@ -118,11 +118,11 @@ function SerialStep!(m::Ising, Cells::Tuple{Int,Int}, temp::Array{Int8,2})
     h_min = -4
     h_max = 4
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:h_max]
-    m, n = size(m.State)
+    o, n = size(m.State)
     @inbounds for j ∈ 1:n
-        @tturbo for i ∈ 1:m
-            top = m.State[i == 1 ? m : i-1, j]
-            bottom = m.State[i == m ? 1 : i+1, j]
+        @tturbo for i ∈ 1:o
+            top = m.State[i == 1 ? o : i-1, j]
+            bottom = m.State[i == o ? 1 : i+1, j]
             right = m.State[i, j == 1 ? n : j-1]
             left = m.State[i, j == n ? 1 : j+1]
             h = top + bottom + right + left
@@ -136,14 +136,14 @@ function SerialStep!(m::Ising, Cells::Tuple{Int,Int,Int}, temp::Array{Int8,3})
     h_min = -6
     h_max = 6
     prob = [1/(1+exp(-2*m.β*h)) for h ∈ h_min:h_max]
-    m, n, o = size(m.State)
+    p, n, o = size(m.State)
     @inbounds for k ∈ 1:o
         @inbounds for j ∈ 1:n
-            @tturbo for i ∈ 1:m
+            @tturbo for i ∈ 1:p
                 front = m.State[i, j, k == 1 ? o : k-1]
                 back = m.State[i, j, k == o ? 1 : k+1]
-                top = m.State[i == 1 ? m : i-1, j, k]
-                bottom = m.State[i == m ? 1 : i+1, j, k]
+                top = m.State[i == 1 ? p : i-1, j, k]
+                bottom = m.State[i == p ? 1 : i+1, j, k]
                 right = m.State[i, j == 1 ? n : j-1, k]
                 left = m.State[i, j == n ? 1 : j+1, k]
                 h = top + bottom + right + left + front + back
@@ -239,7 +239,7 @@ function EvaluateModel!(m::Ising, StepFunction::Function)
         else
             m.State = StepFunction(m,m.Cells,m.Procs)
         end
-        
+
         if st % m.SaveStep == 0
             writedlm(f,m.State)
         end
