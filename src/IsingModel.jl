@@ -238,6 +238,8 @@ function EvaluateModel!(m::Ising, StepFunction::Function)
             m.State = StepFunction(m, m.Cells, temp)
         else
             m.State = StepFunction(m,m.Cells,m.Procs)
+        end
+        
         if st % m.SaveStep == 0
             writedlm(f,m.State)
         end
